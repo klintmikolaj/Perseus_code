@@ -1,7 +1,9 @@
 import random
 import numpy as np
 
+
 def divide_four(text: str):
+    """Divides the input string into four-element list"""
     divided_list = []
     char_list = list(text)
     for i in range(0, len(char_list), 4):
@@ -9,11 +11,14 @@ def divide_four(text: str):
         divided_list.append(fragment)
     return divided_list
 
+
 def create_possible_char_list():
+    """Creates a list of all possible characters (numbers, upper/lower letters)"""
     possible_char_list = [chr(i) for i in range(48, 58)]
     possible_char_list.extend([chr(i) for i in range(65, 91)])
     possible_char_list.extend([chr(i) for i in range(97, 123)])
     return possible_char_list
+
 
 def caesar_cipher(text: str, val: int, possible_char: list, rev: bool):
     """Implementation of the Caesar cipher or its reversed version"""
@@ -37,10 +42,13 @@ def caesar_cipher(text: str, val: int, possible_char: list, rev: bool):
 
 
 def generate_key(possible_char: list):
+    """Generates a secret key for encryption/decryption"""
     secret_key = "".join(random.choice(possible_char[1:]) for _ in range(7))
     return secret_key
 
+
 def create_adjacency_matrix():
+    """Creates an adjacency matrix of the Perseus graph"""
     num_vertices = 14
     adjacency_matrix = np.zeros((num_vertices, num_vertices), dtype=int)
     edges = [
@@ -74,29 +82,33 @@ def set_graph_paths_weight(matrix: np.ndarray, secret_key: str, possible_char: l
                     weight = graph_weights[weight_index]
                     matrix[i, j] = matrix[j, i] = weight
                     weight_index += 1
-
     return matrix
 
+
 def encryption(text: str, w_matrix: np.ndarray, possible_char: list):
+    """Encrypts the data"""
     secret_key = generate_key(possible_char)
     print("Wygenerowany klucz:", secret_key)
-    return _process_text(text, w_matrix, possible_char, secret_key, False), secret_key
+    return move_between_vertices(text, w_matrix, possible_char, secret_key, False), secret_key
+
 
 def decryption(encrypted_text: str, w_matrix: np.ndarray, possible_char: list, secret_key: str):
-    return _process_text(encrypted_text, w_matrix, possible_char, secret_key, True)
+    """Decrypts the data"""
+    return move_between_vertices(encrypted_text, w_matrix, possible_char, secret_key, True)
 
 
-def _process_text(text: str, w_matrix: np.ndarray, possible_char: list, secret_key: str, reverse: bool):
+def move_between_vertices(text: str, w_matrix: np.ndarray, possible_char: list, secret_key: str, reverse: bool):
+    """Processes the text with the algorithm based on the graph """
     div_list = divide_four(text)
     weighted_matrix = set_graph_paths_weight(w_matrix, secret_key, possible_char)
     processed_text = ""
 
     # Upewnij się, że używasz wagi z odpowiednich miejsc macierzy
-    vertices = [0, 6, 10, 12]  # Indeksy wierzchołków startowych w macierzy są zerowo indeksowane
+    vertices_index = [0, 6, 10, 12]  # Indeksy wierzchołków startowych w macierzy są zerowo indeksowane
 
     for fragment in div_list:
         new_fragment = ''
-        for char, vert in zip(fragment, vertices):
+        for char, vert in zip(fragment, vertices_index):
             if char:
                 # Użycie wagi z macierzy - ważne jest, aby waga była odpowiednia dla danego znaku
                 weight = weighted_matrix[vert][np.where(weighted_matrix[vert] > 0)][
@@ -105,6 +117,7 @@ def _process_text(text: str, w_matrix: np.ndarray, possible_char: list, secret_k
                 new_fragment += new_char
         processed_text += new_fragment
     return processed_text
+
 
 # Main loop for testing encryption and decryption
 possible_char = create_possible_char_list()

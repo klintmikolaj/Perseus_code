@@ -188,7 +188,7 @@ GREEN = "\033[32m"
 RESET = "\033[0m"
 BLUE = "\033[34m"
 
-print("\nWitaj w programie kodującym Perseusz!")
+print("\nSzyfr Orfeusza")
 while True:
     possible_char = create_possible_char_list()
     adjacency_matrix = create_adjacency_matrix()

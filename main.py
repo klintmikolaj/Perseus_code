@@ -67,6 +67,7 @@ def set_graph_paths_weight(matrix: np.ndarray, secret_key: str, possible_char: l
     """Sets weight value to every path connecting two vertices based on the secret key"""
     # Generates graph paths weights based on the secret key
     graph_weights = [(possible_char.index(char) % len(possible_char)) + 1 for char in secret_key]
+    print(graph_weights)
 
     # Sets specific weights to certain graph path
     weight_index = 0
